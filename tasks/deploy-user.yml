@@ -1,0 +1,67 @@
+---
+
+- name: ensure deploy group
+  group:
+    name: deploy
+    state: present
+
+- name: mkdir /home/deploy/.ssh
+  file:
+    state: directory
+    path: /home/deploy/.ssh
+    owner: deploy
+    group: deploy
+    mode: 0700
+  become: true
+  become_user: root
+
+
+- name: set private ssh key
+  s3:
+    bucket: "{{ secrets_bucket }}"
+    object: "{{ omnia_control_deploy_private_key_s3_object }}"
+    dest: /home/deploy/.ssh/id_rsa
+    region: "{{ aws_region | default(omnia_control_default_aws_region) }}"
+    mode: get
+    overwrite: false
+  become: true
+  become_user: root
+
+- name: set ssh private key permissions
+  file:
+    path: /home/deploy/.ssh/id_rsa
+    mode: 0400
+    owner: deploy
+    group: deploy
+    force: yes
+    state: file
+  become: true
+  become_user: root
+
+- name: get public key from S3
+  s3:
+    bucket: "{{secrets_bucket}}"
+    object: "{{ omnia_control_deploy_public_key_s3_object }}"
+    mode: getstr
+    region: "{{aws_region}}"
+  register: info
+  changed_when: false
+
+- set_fact:
+    deploy_public_key: "{{ info.contents }}"
+
+- name: set authorized_keys file
+  authorized_key:
+    user: deploy
+    key: "{{ deploy_public_key }}"
+    state: present
+
+- name: populate deploy known_hosts of the deploy user
+  shell: ssh {{ansible_eth0.ipv4.address}} -o StrictHostKeyChecking=no ls
+  args:
+    creates: '/home/deploy/.ssh/known_hosts'
+  become: true
+  become_user: deploy
+
+
+
