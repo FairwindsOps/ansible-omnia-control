@@ -1,0 +1,18 @@
+---
+
+- include: ansible.yml
+- include: deploy-user.yml
+
+- name: create /opt/omnia/roles
+  file:
+    path: "{{item}}"
+    state: directory
+    owner: deploy
+    group: deploy
+  become: true
+  become_user: root
+  with_items:
+    - /opt/omnia
+    - /opt/omnia/roles
+    - /opt/omnia/roles/rails
+

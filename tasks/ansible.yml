@@ -1,0 +1,10 @@
+---
+
+- name: install ansible
+  become: true
+  become_user: root
+  pip:
+    name: "{{item}}"
+  with_items:
+    - ansible
+    - boto
