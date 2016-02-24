@@ -15,17 +15,23 @@
   become: true
   become_user: root
 
-
 - name: set private ssh key
   s3:
     bucket: "{{ secrets_bucket }}"
     object: "{{ omnia_control_deploy_private_key_s3_object }}"
-    dest: /home/deploy/.ssh/id_rsa
+    dest:   '/home/deploy/.ssh/id_rsa'
     region: "{{ aws_region | default(omnia_control_default_aws_region) }}"
     mode: get
     overwrite: false
   become: true
   become_user: root
+
+- name: set symlink for the stackstorm private key
+  file:
+    state: link
+    force: true
+    src: '/home/deploy/.ssh/id_rsa'
+    dest: "{{omnia_control_stackstorm_system_user_ssh_key_file}}"
 
 - name: set ssh private key permissions
   file:

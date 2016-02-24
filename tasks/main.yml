@@ -14,5 +14,4 @@
   with_items:
     - /opt/omnia
     - /opt/omnia/roles
-    - /opt/omnia/roles/rails
 

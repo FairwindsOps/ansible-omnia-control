@@ -1,4 +1,7 @@
 ---
 omnia_control_default_aws_region: 'us-east-1'
-omnia_control_deploy_private_key_s3_object: "/environments/admin/files/deploy_private_key" 
-omnia_control_deploy_public_key_s3_object: "/environments/admin/files/deploy_public_key" 
+omnia_control_deploy_private_key_s3_object: "/environments/admin/files/deploy_private_key"
+omnia_control_deploy_public_key_s3_object: "/environments/admin/files/deploy_public_key"
+
+# The system_user > ssh_key_file key referred to in /etc/st2/st2.conf
+omnia_control_stackstorm_system_user_ssh_key_file: "/home/deploy/.ssh/st2_deploy_key"
