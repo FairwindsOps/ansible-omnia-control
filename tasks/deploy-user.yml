@@ -5,6 +5,12 @@
     name: deploy
     state: present
 
+- name: ensure deploy user
+  user:
+    name: deploy
+    group: deploy
+    state: present
+
 - name: mkdir /home/deploy/.ssh
   file:
     state: directory
@@ -68,6 +74,3 @@
     creates: '/home/deploy/.ssh/known_hosts'
   become: true
   become_user: deploy
-
-
-
